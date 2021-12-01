@@ -12,11 +12,11 @@ import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
-class MainActivity : AppCompatActivity(),checkBoxDelegate {
+class MainActivity : AppCompatActivity() {
     lateinit var taskRV: RecyclerView
     lateinit var addTaskBtn : View
     var toDoList : ArrayList<ToDo> = ArrayList()
-    lateinit var rvAdapter: RecyclerViewAdapter
+    lateinit var taskAdapter: RecyclerViewAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,8 +26,8 @@ class MainActivity : AppCompatActivity(),checkBoxDelegate {
         addTaskBtn = findViewById(R.id.floatingAddButton)
 
         // Adapter setting
-        rvAdapter= RecyclerViewAdapter(toDoList,this)
-        taskRV.adapter = rvAdapter
+        taskAdapter= RecyclerViewAdapter(toDoList)
+        taskRV.adapter = taskAdapter
         taskRV.layoutManager = LinearLayoutManager(this)
 
         // floatingactionbutton
@@ -36,27 +36,24 @@ class MainActivity : AppCompatActivity(),checkBoxDelegate {
         }
     }
 
-    override fun chechClicked(isCheckedValue:Boolean, position: Int) {
-        toDoList[position].completed = isCheckedValue
-        println("mmmmmmmmmmmmmmmmmmm" + toDoList[position].completed)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        var deletedTskNum = 0
-        for(i in 0 until toDoList.size)
-            if(toDoList[i].completed){
-                toDoList.removeAt(i)
-                deletedTskNum++
-            }
-
-        Toast.makeText(this, "$deletedTskNum tasks deleted", Toast.LENGTH_LONG).show()
-        return super.onOptionsItemSelected(item)
-    }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.toolbar_menu, menu)
         return true
     }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        var deletedTskNum = 0
+        for(task in toDoList)
+            if(task.completed)
+                deletedTskNum++
+
+        taskAdapter.deleteTask()
+
+        Toast.makeText(this, "$deletedTskNum tasks deleted", Toast.LENGTH_LONG).show()
+        return super.onOptionsItemSelected(item)
+    }
+
 
     fun alertDialog() {
 
